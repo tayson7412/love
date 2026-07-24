@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Ti ❤️</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+background:#000;
+overflow:hidden;
+font-family:Arial,Helvetica,sans-serif;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+color:white;
+
+}
+
+canvas{
+
+position:fixed;
+top:0;
+left:0;
+z-index:0;
+
+}
+
+.contenido{
+
+position:relative;
+z-index:2;
+text-align:center;
+
+}
+
+h1{
+
+font-size:70px;
+color:#ff4d6d;
+text-shadow:0 0 20px #ff4d6d;
+
+animation:latido 1s infinite;
+
+}
+
+p{
+
+margin-top:20px;
+font-size:22px;
+color:white;
+
+}
+
+button{
+
+margin-top:40px;
+padding:18px 40px;
+font-size:20px;
+border:none;
+border-radius:50px;
+background:#ff4d6d;
+color:white;
+cursor:pointer;
+transition:.3s;
+
+}
+
+button:hover{
+
+transform:scale(1.1);
+
+}
+
+@keyframes latido{
+
+0%{transform:scale(1);}
+50%{transform:scale(1.15);}
+100%{transform:scale(1);}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div class="contenido">
+
+<h1>❤️</h1>
+
+<p>Tengo una sorpresa para ti...</p>
+
+<button onclick="alert('Muy pronto comenzará nuestra historia ❤️')">
+
+Comenzar
+
+</button>
+
+</div>
+
+<script>
+
+const canvas=document.getElementById("canvas");
+
+const ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let corazones=[];
+
+for(let i=0;i<100;i++){
+
+corazones.push({
+
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+size:Math.random()*6+2,
+speed:Math.random()*2+1
+
+});
+
+}
+
+function dibujar(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="#ff4d6d";
+
+corazones.forEach(c=>{
+
+ctx.beginPath();
+
+ctx.arc(c.x,c.y,c.size,0,Math.PI*2);
+
+ctx.fill();
+
+c.y-=c.speed;
+
+if(c.y<0){
+
+c.y=canvas.height;
+
+c.x=Math.random()*canvas.width;
+
+}
+
+});
+
+requestAnimationFrame(dibujar);
+
+}
+
+dibujar();
+
+</script>
+
+</body>
+</html>
