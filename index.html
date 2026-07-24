@@ -1,102 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For You</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #000000;
-            font-family: 'Arial', sans-serif;
-            color: #fff;
-        }
-
-        #canvas-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            text-align: center;
-            pointer-events: none;
-        }
-
-        h1 {
-            font-size: 2.8rem;
-            color: #ffffff;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(138, 43, 226, 0.8), 0 0 45px rgba(255, 20, 147, 0.8);
-            margin: 0;
-            letter-spacing: 2px;
-            animation: glow 3s infinite alternate;
-        }
-
-        @keyframes glow {
-            0% { text-shadow: 0 0 10px #fff, 0 0 20px #ff1493, 0 0 30px #8a2be2; }
-            100% { text-shadow: 0 0 20px #fff, 0 0 35px #ff69b4, 0 0 50px #9400d3; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Ti ❤️</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <div class="overlay">
-        <h1 id="main-title">I LOVE YOU</h1>
-    </div>
+<div class="container">
+<h1>❤️ Tengo algo que decirte ❤️</h1>
 
-    <div id="canvas-container"></div>
+<button onclick="mostrar()">
+Presiona aquí
+</button>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
-    <script>
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x000000, 0.001);
+<p id="mensaje"></p>
 
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('canvas-container').appendChild(renderer.domElement);
+</div>
 
-        camera.position.z = 800;
+<script src="script.js"></script>
 
-        // Crear una textura brillante procedural para las estrellas / puntos de luz
-        function createStarTexture() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 128;
-            canvas.height = 128;
-            const ctx = canvas.getContext('2d');
-            
-            const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-            gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-            gradient.addColorStop(0.2, 'rgba(255, 105, 180, 0.8)');
-            gradient.addColorStop(0.5, 'rgba(138, 43, 226, 0.4)');
-            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-            
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 128, 128);
-
-            return new THREE.CanvasTexture(canvas);
-        }
-
-        // Sistema de partículas masivo estilo campo de estrellas brillantes / polvo cósmico
-        const particleCount = 1500;
-        const geometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(particleCount * 3);
-        const scales = new Float32Array(particleCount);
-
-        for (let i = 0; i < particleCount * 3; i += 3) {
-            positions[i] = (Math.random() - 0.5) * 2500;     // X
-            positions[i + 1] = (Math.random() - 0.5) * 2500; // Y
-            positions[i + 2] = (Math
+</body>
+</html>
