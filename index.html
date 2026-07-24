@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Para Ti ❤️</title>
+<title>For Bella ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 
 <style>
 
@@ -11,67 +13,62 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
+font-family:'Poppins',sans-serif;
 }
 
 body{
-
 background:#000;
 overflow:hidden;
-font-family:Arial,Helvetica,sans-serif;
-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
+height:100vh;
 color:white;
-
 }
 
 canvas{
-
 position:fixed;
-top:0;
 left:0;
+top:0;
+width:100%;
+height:100%;
 z-index:0;
-
 }
 
-.contenido{
-
+.container{
 position:relative;
 z-index:2;
 text-align:center;
-
+padding:20px;
+animation:fadeIn 2s;
 }
 
 h1{
-
 font-size:70px;
 color:#ff4d6d;
+letter-spacing:8px;
+margin-bottom:20px;
 text-shadow:0 0 20px #ff4d6d;
-
-animation:latido 1s infinite;
-
 }
 
 p{
-
-margin-top:20px;
-font-size:22px;
-color:white;
-
+font-size:28px;
+font-weight:300;
+opacity:.9;
+margin-bottom:50px;
 }
 
 button{
 
-margin-top:40px;
-padding:18px 40px;
-font-size:20px;
+padding:18px 45px;
 border:none;
 border-radius:50px;
-background:#ff4d6d;
-color:white;
+font-size:20px;
 cursor:pointer;
-transition:.3s;
+background:linear-gradient(45deg,#ff4d6d,#ff758f);
+color:white;
+transition:.4s;
+box-shadow:0 0 30px rgba(255,0,80,.5);
 
 }
 
@@ -79,13 +76,45 @@ button:hover{
 
 transform:scale(1.1);
 
+box-shadow:0 0 50px rgba(255,0,80,.9);
+
 }
 
-@keyframes latido{
+.message{
 
-0%{transform:scale(1);}
-50%{transform:scale(1.15);}
-100%{transform:scale(1);}
+position:absolute;
+left:50%;
+top:50%;
+transform:translate(-50%,-50%);
+font-size:42px;
+text-align:center;
+max-width:800px;
+line-height:1.7;
+display:none;
+animation:fadeIn 2s;
+
+}
+
+#typewriter{
+
+border-right:2px solid white;
+white-space:pre-line;
+
+}
+
+@keyframes fadeIn{
+
+from{
+opacity:0;
+transform:translateY(20px);
+}
+
+to{
+
+opacity:1;
+transform:translateY(0px);
+
+}
 
 }
 
@@ -95,77 +124,114 @@ transform:scale(1.1);
 
 <body>
 
-<canvas id="canvas"></canvas>
+<canvas id="stars"></canvas>
 
-<div class="contenido">
+<div class="container" id="intro">
 
-<h1>❤️</h1>
+<h1>BELLA</h1>
 
-<p>Tengo una sorpresa para ti...</p>
+<p>Just trust me for one minute...</p>
 
-<button onclick="alert('Muy pronto comenzará nuestra historia ❤️')">
-
-Comenzar
-
+<button onclick="startStory()">
+Open Your Heart ❤️
 </button>
+
+</div>
+
+<div class="message" id="story">
+
+<div id="typewriter"></div>
 
 </div>
 
 <script>
 
-const canvas=document.getElementById("canvas");
-
+const canvas=document.getElementById("stars");
 const ctx=canvas.getContext("2d");
 
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
-let corazones=[];
+let stars=[];
 
-for(let i=0;i<100;i++){
+for(let i=0;i<200;i++){
 
-corazones.push({
+stars.push({
 
 x:Math.random()*canvas.width,
 y:Math.random()*canvas.height,
-size:Math.random()*6+2,
-speed:Math.random()*2+1
+r:Math.random()*2,
+s:Math.random()*0.5+0.2
 
 });
 
 }
 
-function dibujar(){
+function draw(){
 
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
-ctx.fillStyle="#ff4d6d";
+ctx.fillStyle="white";
 
-corazones.forEach(c=>{
+stars.forEach(st=>{
 
 ctx.beginPath();
 
-ctx.arc(c.x,c.y,c.size,0,Math.PI*2);
+ctx.arc(st.x,st.y,st.r,0,Math.PI*2);
 
 ctx.fill();
 
-c.y-=c.speed;
+st.y+=st.s;
 
-if(c.y<0){
+if(st.y>canvas.height){
 
-c.y=canvas.height;
+st.y=0;
 
-c.x=Math.random()*canvas.width;
+st.x=Math.random()*canvas.width;
 
 }
 
 });
 
-requestAnimationFrame(dibujar);
+requestAnimationFrame(draw);
 
 }
 
-dibujar();
+draw();
+
+function startStory(){
+
+document.getElementById("intro").style.display="none";
+
+document.getElementById("story").style.display="block";
+
+const text=
+
+`I just wanted to give you
+a little moment...
+
+Because you make my days
+so much brighter. ❤️`;
+
+let i=0;
+
+function typing(){
+
+if(i<text.length){
+
+document.getElementById("typewriter").innerHTML+=text.charAt(i);
+
+i++;
+
+setTimeout(typing,60);
+
+}
+
+}
+
+typing();
+
+}
 
 </script>
 
