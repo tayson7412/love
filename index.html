@@ -11,7 +11,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #030005;
+            background-color: #000000;
             font-family: 'Arial', sans-serif;
             color: #fff;
         }
@@ -32,162 +32,71 @@
             transform: translate(-50%, -50%);
             z-index: 10;
             text-align: center;
-            pointer-events: auto;
-            cursor: pointer;
-            width: 90%;
-            max-width: 600px;
+            pointer-events: none;
         }
 
         h1 {
-            font-size: 2.5rem;
-            color: #ff4d94;
-            text-shadow: 0 0 25px rgba(255, 77, 148, 0.9), 0 0 10px rgba(255, 20, 147, 0.7);
-            margin: 0 0 10px 0;
-            animation: pulse 2s infinite;
-        }
-
-        p {
-            font-size: 1.1rem;
-            color: #ffb3de;
-            text-shadow: 0 0 10px rgba(255, 179, 222, 0.6);
-            margin: 0;
-            opacity: 0.8;
-            transition: opacity 0.5s;
-        }
-
-        .hidden-message {
-            margin-top: 20px;
-            font-size: 1rem;
+            font-size: 2.8rem;
             color: #ffffff;
-            background: rgba(255, 20, 147, 0.2);
-            border: 1px solid rgba(255, 77, 148, 0.5);
-            padding: 15px;
-            border-radius: 12px;
-            backdrop-filter: blur(5px);
-            display: none;
-            animation: fadeIn 1s forwards;
-            box-shadow: 0 0 20px rgba(255, 20, 147, 0.4);
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(138, 43, 226, 0.8), 0 0 45px rgba(255, 20, 147, 0.8);
+            margin: 0;
+            letter-spacing: 2px;
+            animation: glow 3s infinite alternate;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes glow {
+            0% { text-shadow: 0 0 10px #fff, 0 0 20px #ff1493, 0 0 30px #8a2be2; }
+            100% { text-shadow: 0 0 20px #fff, 0 0 35px #ff69b4, 0 0 50px #9400d3; }
         }
     </style>
 </head>
 <body>
 
-    <div class="overlay" onclick="revealMessage()">
-        <h1 id="main-title">I LOVE YOU SO MUCH</h1>
-        <p id="sub-title">(Tap or click anywhere for a special message)</p>
-        <div id="secret-box" class="hidden-message">
-            "You are my favorite thought, my best distraction, and the most wonderful part of my life. Thank you for existing." ✨💖
-        </div>
+    <div class="overlay">
+        <h1 id="main-title">I LOVE YOU</h1>
     </div>
 
     <div id="canvas-container"></div>
 
-    <!-- Three.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <script>
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        scene.fog = new THREE.FogExp2(0x000000, 0.001);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        camera.position.z = 500;
+        camera.position.z = 800;
 
-        // Expanded list of phrases and elements for richness
-        const messages = [
-            "I LOVE YOU", "FOREVER", "❤️", "MY LOVE", 
-            "ALWAYS", "YOU & ME", "BEAUTIFUL", "SO MUCH",
-            "MY HEART", "SOULMATE", "TE AMO", "SPECIAL", "✨"
-        ];
-
-        function createTextTexture(text) {
+        // Crear una textura brillante procedural para las estrellas / puntos de luz
+        function createStarTexture() {
             const canvas = document.createElement('canvas');
-            canvas.width = 512;
-            canvas.height = 256;
+            canvas.width = 128;
+            canvas.height = 128;
             const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            ctx.font = 'Bold 38px Arial';
-            ctx.fillStyle = '#ffc2e2';
-            ctx.textAlign = 'center';
-            ctx.shadowColor = '#ff1493';
-            ctx.shadowBlur = 18;
-            ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+            const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+            gradient.addColorStop(0.2, 'rgba(255, 105, 180, 0.8)');
+            gradient.addColorStop(0.5, 'rgba(138, 43, 226, 0.4)');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 128, 128);
 
             return new THREE.CanvasTexture(canvas);
         }
 
-        const elements = [];
+        // Sistema de partículas masivo estilo campo de estrellas brillantes / polvo cósmico
+        const particleCount = 1500;
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const scales = new Float32Array(particleCount);
 
-        // Increased amount of items so it doesn't look empty (75 items)
-        for (let i = 0; i < 75; i++) {
-            const text = messages[Math.floor(Math.random() * messages.length)];
-            const texture = createTextTexture(text);
-            const material = new THREE.MeshBasicMaterial({ 
-                map: texture, 
-                transparent: true,
-                side: THREE.DoubleSide 
-            });
-            
-            const geometry = new THREE.PlaneGeometry(130, 65);
-            const mesh = new THREE.Mesh(geometry, material);
-
-            mesh.position.x = (Math.random() - 0.5) * 1400;
-            mesh.position.y = (Math.random() - 0.5) * 1400;
-            mesh.position.z = (Math.random() - 0.5) * 1200;
-
-            scene.add(mesh);
-            elements.push({ mesh, speed: Math.random() * 1.8 + 0.8 });
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            elements.forEach(item => {
-                item.mesh.position.z += item.speed;
-                // Loop items back to the background when they get close
-                if (item.mesh.position.z > 400) {
-                    item.mesh.position.z = -800;
-                    item.mesh.position.x = (Math.random() - 0.5) * 1400;
-                    item.mesh.position.y = (Math.random() - 0.5) * 1400;
-                }
-            });
-
-            renderer.render(scene, camera);
-        }
-
-        animate();
-
-        // Interactive function to show hidden text
-        function revealMessage() {
-            const box = document.getElementById('secret-box');
-            const subtitle = document.getElementById('sub-title');
-            if (box.style.display === 'block') {
-                box.style.display = 'none';
-                subtitle.style.opacity = '0.8';
-            } else {
-                box.style.display = 'block';
-                subtitle.style.opacity = '0';
-            }
-        }
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script>
-</body>
-</html>
+        for (let i = 0; i < particleCount * 3; i += 3) {
+            positions[i] = (Math.random() - 0.5) * 2500;     // X
+            positions[i + 1] = (Math.random() - 0.5) * 2500; // Y
+            positions[i + 2] = (Math
