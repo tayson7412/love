@@ -11,7 +11,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #05020a;
+            background-color: #030005;
             font-family: 'Arial', sans-serif;
             color: #fff;
         }
@@ -32,37 +32,71 @@
             transform: translate(-50%, -50%);
             z-index: 10;
             text-align: center;
-            pointer-events: none;
+            pointer-events: auto;
+            cursor: pointer;
+            width: 90%;
+            max-width: 600px;
         }
 
         h1 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             color: #ff4d94;
-            text-shadow: 0 0 20px rgba(255, 77, 148, 0.8);
-            margin: 0;
+            text-shadow: 0 0 25px rgba(255, 77, 148, 0.9), 0 0 10px rgba(255, 20, 147, 0.7);
+            margin: 0 0 10px 0;
             animation: pulse 2s infinite;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #ffb3de;
+            text-shadow: 0 0 10px rgba(255, 179, 222, 0.6);
+            margin: 0;
+            opacity: 0.8;
+            transition: opacity 0.5s;
+        }
+
+        .hidden-message {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #ffffff;
+            background: rgba(255, 20, 147, 0.2);
+            border: 1px solid rgba(255, 77, 148, 0.5);
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            display: none;
+            animation: fadeIn 1s forwards;
+            box-shadow: 0 0 20px rgba(255, 20, 147, 0.4);
         }
 
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.03); }
             100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-    <div class="overlay">
+    <div class="overlay" onclick="revealMessage()">
         <h1 id="main-title">I LOVE YOU SO MUCH</h1>
+        <p id="sub-title">(Tap or click anywhere for a special message)</p>
+        <div id="secret-box" class="hidden-message">
+            "You are my favorite thought, my best distraction, and the most wonderful part of my life. Thank you for existing." ✨💖
+        </div>
     </div>
 
     <div id="canvas-container"></div>
 
-    <!-- Importing Three.js for 3D graphics and floating text effects -->
+    <!-- Three.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <script>
-        // Basic 3D scene setup
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -71,13 +105,13 @@
 
         camera.position.z = 500;
 
-        // List of phrases floating in space (in English)
+        // Expanded list of phrases and elements for richness
         const messages = [
             "I LOVE YOU", "FOREVER", "❤️", "MY LOVE", 
-            "ALWAYS", "YOU & ME", "BEAUTIFUL", "SO MUCH"
+            "ALWAYS", "YOU & ME", "BEAUTIFUL", "SO MUCH",
+            "MY HEART", "SOULMATE", "TE AMO", "SPECIAL", "✨"
         ];
 
-        // Function to create textures with floating text
         function createTextTexture(text) {
             const canvas = document.createElement('canvas');
             canvas.width = 512;
@@ -85,21 +119,20 @@
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            ctx.font = 'Bold 40px Arial';
-            ctx.fillStyle = '#ffb3de';
+            ctx.font = 'Bold 38px Arial';
+            ctx.fillStyle = '#ffc2e2';
             ctx.textAlign = 'center';
             ctx.shadowColor = '#ff1493';
-            ctx.shadowBlur = 15;
+            ctx.shadowBlur = 18;
             ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 
-            const texture = new THREE.CanvasTexture(canvas);
-            return texture;
+            return new THREE.CanvasTexture(canvas);
         }
 
         const elements = [];
 
-        // Create random floating elements
-        for (let i = 0; i < 40; i++) {
+        // Increased amount of items so it doesn't look empty (75 items)
+        for (let i = 0; i < 75; i++) {
             const text = messages[Math.floor(Math.random() * messages.length)];
             const texture = createTextTexture(text);
             const material = new THREE.MeshBasicMaterial({ 
@@ -108,28 +141,27 @@
                 side: THREE.DoubleSide 
             });
             
-            const geometry = new THREE.PlaneGeometry(120, 60);
+            const geometry = new THREE.PlaneGeometry(130, 65);
             const mesh = new THREE.Mesh(geometry, material);
 
-            mesh.position.x = (Math.random() - 0.5) * 1000;
-            mesh.position.y = (Math.random() - 0.5) * 1000;
-            mesh.position.z = (Math.random() - 0.5) * 1000;
+            mesh.position.x = (Math.random() - 0.5) * 1400;
+            mesh.position.y = (Math.random() - 0.5) * 1400;
+            mesh.position.z = (Math.random() - 0.5) * 1200;
 
             scene.add(mesh);
-            elements.push({ mesh, speed: Math.random() * 2 + 1 });
+            elements.push({ mesh, speed: Math.random() * 1.8 + 0.8 });
         }
 
-        // Smooth animation moving towards the camera
         function animate() {
             requestAnimationFrame(animate);
 
             elements.forEach(item => {
                 item.mesh.position.z += item.speed;
-                // If it passes the camera, reset it to the background
+                // Loop items back to the background when they get close
                 if (item.mesh.position.z > 400) {
-                    item.mesh.position.z = -600;
-                    item.mesh.position.x = (Math.random() - 0.5) * 1000;
-                    item.mesh.position.y = (Math.random() - 0.5) * 1000;
+                    item.mesh.position.z = -800;
+                    item.mesh.position.x = (Math.random() - 0.5) * 1400;
+                    item.mesh.position.y = (Math.random() - 0.5) * 1400;
                 }
             });
 
@@ -138,7 +170,19 @@
 
         animate();
 
-        // Adjust screen size dynamically
+        // Interactive function to show hidden text
+        function revealMessage() {
+            const box = document.getElementById('secret-box');
+            const subtitle = document.getElementById('sub-title');
+            if (box.style.display === 'block') {
+                box.style.display = 'none';
+                subtitle.style.opacity = '0.8';
+            } else {
+                box.style.display = 'block';
+                subtitle.style.opacity = '0';
+            }
+        }
+
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
