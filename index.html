@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para Ti</title>
+    <title>For You</title>
     <style>
         body, html {
             margin: 0;
@@ -53,16 +53,16 @@
 <body>
 
     <div class="overlay">
-        <h1 id="main-title">TE QUIERO MUCHO</h1>
+        <h1 id="main-title">I LOVE YOU SO MUCH</h1>
     </div>
 
     <div id="canvas-container"></div>
 
-    <!-- Importamos Three.js para los gráficos 3D y efectos flotantes -->
+    <!-- Importing Three.js for 3D graphics and floating text effects -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <script>
-        // Configuración básica de la escena 3D
+        // Basic 3D scene setup
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -71,13 +71,13 @@
 
         camera.position.z = 500;
 
-        // Lista de frases que flotarán en el espacio
+        // List of phrases floating in space (in English)
         const messages = [
-            "TE QUIERO MUCHO", "I LOVE YOU", "❤️", "MI AMOR", 
-            "PARA SIEMPRE", "CONTIGO TODO", "BEAUTIFUL", "TE AMO"
+            "I LOVE YOU", "FOREVER", "❤️", "MY LOVE", 
+            "ALWAYS", "YOU & ME", "BEAUTIFUL", "SO MUCH"
         ];
 
-        // Función para crear texturas con texto flotante
+        // Function to create textures with floating text
         function createTextTexture(text) {
             const canvas = document.createElement('canvas');
             canvas.width = 512;
@@ -98,7 +98,7 @@
 
         const elements = [];
 
-        // Crear elementos flotantes aleatorios
+        // Create random floating elements
         for (let i = 0; i < 40; i++) {
             const text = messages[Math.floor(Math.random() * messages.length)];
             const texture = createTextTexture(text);
@@ -119,13 +119,13 @@
             elements.push({ mesh, speed: Math.random() * 2 + 1 });
         }
 
-        // Animación fluida de desplazamiento hacia la cámara
+        // Smooth animation moving towards the camera
         function animate() {
             requestAnimationFrame(animate);
 
             elements.forEach(item => {
                 item.mesh.position.z += item.speed;
-                // Si pasa la cámara, lo mandamos al fondo otra vez
+                // If it passes the camera, reset it to the background
                 if (item.mesh.position.z > 400) {
                     item.mesh.position.z = -600;
                     item.mesh.position.x = (Math.random() - 0.5) * 1000;
@@ -138,7 +138,7 @@
 
         animate();
 
-        // Ajustar tamaño si cambia la pantalla
+        // Adjust screen size dynamically
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
