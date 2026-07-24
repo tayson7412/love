@@ -1,279 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Ti</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #05020a;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+        }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
 
-<title>For Bella ❤️</title>
+        .overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+            pointer-events: none;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+        h1 {
+            font-size: 3rem;
+            color: #ff4d94;
+            text-shadow: 0 0 20px rgba(255, 77, 148, 0.8);
+            margin: 0;
+            animation: pulse 2s infinite;
+        }
 
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Poppins,sans-serif;
-}
-
-body{
-
-background:#000;
-overflow:hidden;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-color:white;
-
-}
-
-canvas{
-
-position:fixed;
-left:0;
-top:0;
-width:100%;
-height:100%;
-z-index:0;
-
-}
-
-#intro{
-
-position:relative;
-z-index:2;
-text-align:center;
-
-animation:fade 2s;
-
-}
-
-#heart{
-
-font-size:90px;
-
-animation:beat 1.4s infinite;
-
-filter:drop-shadow(0 0 20px #ff2d55);
-
-}
-
-h1{
-
-font-size:72px;
-
-letter-spacing:12px;
-
-margin-top:20px;
-
-font-weight:700;
-
-}
-
-p{
-
-margin-top:20px;
-
-font-size:28px;
-
-font-weight:300;
-
-opacity:.85;
-
-}
-
-button{
-
-margin-top:60px;
-
-padding:18px 50px;
-
-font-size:20px;
-
-border:none;
-
-border-radius:60px;
-
-cursor:pointer;
-
-background:linear-gradient(45deg,#ff2d55,#ff6b81);
-
-color:white;
-
-transition:.4s;
-
-box-shadow:0 0 40px rgba(255,45,85,.45);
-
-}
-
-button:hover{
-
-transform:scale(1.08);
-
-box-shadow:0 0 70px rgba(255,45,85,.9);
-
-}
-
-@keyframes beat{
-
-0%{transform:scale(1);}
-50%{transform:scale(1.18);}
-100%{transform:scale(1);}
-
-}
-
-@keyframes fade{
-
-from{
-
-opacity:0;
-
-transform:translateY(40px);
-
-}
-
-to{
-
-opacity:1;
-
-transform:translateY(0);
-
-}
-
-}
-
-</style>
-
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
 </head>
-
 <body>
 
-<canvas id="stars"></canvas>
+    <div class="overlay">
+        <h1 id="main-title">TE QUIERO MUCHO</h1>
+    </div>
 
-<div id="intro">
+    <div id="canvas-container"></div>
 
-<div id="heart">❤️</div>
+    <!-- Importamos Three.js para los gráficos 3D y efectos flotantes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script>
+        // Configuración básica de la escena 3D
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-<h1>BELLA</h1>
+        camera.position.z = 500;
 
-<p>Just trust me for one minute...</p>
+        // Lista de frases que flotarán en el espacio
+        const messages = [
+            "TE QUIERO MUCHO", "I LOVE YOU", "❤️", "MI AMOR", 
+            "PARA SIEMPRE", "CONTIGO TODO", "BEAUTIFUL", "TE AMO"
+        ];
 
-<button id="open">
+        // Función para crear texturas con texto flotante
+        function createTextTexture(text) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.font = 'Bold 40px Arial';
+            ctx.fillStyle = '#ffb3de';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = '#ff1493';
+            ctx.shadowBlur = 15;
+            ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 
-Open Your Heart ❤️
+            const texture = new THREE.CanvasTexture(canvas);
+            return texture;
+        }
 
-</button>
+        const elements = [];
 
-</div>
+        // Crear elementos flotantes aleatorios
+        for (let i = 0; i < 40; i++) {
+            const text = messages[Math.floor(Math.random() * messages.length)];
+            const texture = createTextTexture(text);
+            const material = new THREE.MeshBasicMaterial({ 
+                map: texture, 
+                transparent: true,
+                side: THREE.DoubleSide 
+            });
+            
+            const geometry = new THREE.PlaneGeometry(120, 60);
+            const mesh = new THREE.Mesh(geometry, material);
 
-<script>
+            mesh.position.x = (Math.random() - 0.5) * 1000;
+            mesh.position.y = (Math.random() - 0.5) * 1000;
+            mesh.position.z = (Math.random() - 0.5) * 1000;
 
-const canvas=document.getElementById("stars");
+            scene.add(mesh);
+            elements.push({ mesh, speed: Math.random() * 2 + 1 });
+        }
 
-const ctx=canvas.getContext("2d");
+        // Animación fluida de desplazamiento hacia la cámara
+        function animate() {
+            requestAnimationFrame(animate);
 
-function resize(){
+            elements.forEach(item => {
+                item.mesh.position.z += item.speed;
+                // Si pasa la cámara, lo mandamos al fondo otra vez
+                if (item.mesh.position.z > 400) {
+                    item.mesh.position.z = -600;
+                    item.mesh.position.x = (Math.random() - 0.5) * 1000;
+                    item.mesh.position.y = (Math.random() - 0.5) * 1000;
+                }
+            });
 
-canvas.width=window.innerWidth;
+            renderer.render(scene, camera);
+        }
 
-canvas.height=window.innerHeight;
+        animate();
 
-}
-
-resize();
-
-window.onresize=resize;
-
-let stars=[];
-
-for(let i=0;i<250;i++){
-
-stars.push({
-
-x:Math.random()*canvas.width,
-
-y:Math.random()*canvas.height,
-
-r:Math.random()*2,
-
-v:Math.random()*0.6+.1,
-
-a:Math.random()
-
-});
-
-}
-
-function animate(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-stars.forEach(s=>{
-
-ctx.beginPath();
-
-ctx.fillStyle="rgba(255,255,255,"+s.a+")";
-
-ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-
-ctx.fill();
-
-s.y+=s.v;
-
-if(s.y>canvas.height){
-
-s.y=0;
-
-s.x=Math.random()*canvas.width;
-
-}
-
-});
-
-requestAnimationFrame(animate);
-
-}
-
-animate();
-
-document.getElementById("open").onclick=function(){
-
-document.body.style.transition="2s";
-
-document.body.style.background="#05010d";
-
-document.getElementById("intro").innerHTML=`
-
-<div style="font-size:70px;line-height:1.6;animation:fade 2s;">
-
-I just wanted to give you
-
-<br><br>
-
-a little moment...
-
-<br><br>
-
-<span style="color:#ff5f8f;">
-
-Because you make my days
-
-so much brighter. ❤️
-
-</span>
-
-</div>
-
-`;
-
-};
-
-</script>
-
+        // Ajustar tamaño si cambia la pantalla
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
 </body>
-
 </html>
