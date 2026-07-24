@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
 <title>For Bella ❤️</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
 
@@ -13,106 +16,131 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Poppins',sans-serif;
+font-family:Poppins,sans-serif;
 }
 
 body{
+
 background:#000;
 overflow:hidden;
+height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
 color:white;
+
 }
 
 canvas{
+
 position:fixed;
 left:0;
 top:0;
 width:100%;
 height:100%;
 z-index:0;
+
 }
 
-.container{
+#intro{
+
 position:relative;
 z-index:2;
 text-align:center;
-padding:20px;
-animation:fadeIn 2s;
+
+animation:fade 2s;
+
+}
+
+#heart{
+
+font-size:90px;
+
+animation:beat 1.4s infinite;
+
+filter:drop-shadow(0 0 20px #ff2d55);
+
 }
 
 h1{
-font-size:70px;
-color:#ff4d6d;
-letter-spacing:8px;
-margin-bottom:20px;
-text-shadow:0 0 20px #ff4d6d;
+
+font-size:72px;
+
+letter-spacing:12px;
+
+margin-top:20px;
+
+font-weight:700;
+
 }
 
 p{
+
+margin-top:20px;
+
 font-size:28px;
+
 font-weight:300;
-opacity:.9;
-margin-bottom:50px;
+
+opacity:.85;
+
 }
 
 button{
 
-padding:18px 45px;
-border:none;
-border-radius:50px;
+margin-top:60px;
+
+padding:18px 50px;
+
 font-size:20px;
+
+border:none;
+
+border-radius:60px;
+
 cursor:pointer;
-background:linear-gradient(45deg,#ff4d6d,#ff758f);
+
+background:linear-gradient(45deg,#ff2d55,#ff6b81);
+
 color:white;
+
 transition:.4s;
-box-shadow:0 0 30px rgba(255,0,80,.5);
+
+box-shadow:0 0 40px rgba(255,45,85,.45);
 
 }
 
 button:hover{
 
-transform:scale(1.1);
+transform:scale(1.08);
 
-box-shadow:0 0 50px rgba(255,0,80,.9);
-
-}
-
-.message{
-
-position:absolute;
-left:50%;
-top:50%;
-transform:translate(-50%,-50%);
-font-size:42px;
-text-align:center;
-max-width:800px;
-line-height:1.7;
-display:none;
-animation:fadeIn 2s;
+box-shadow:0 0 70px rgba(255,45,85,.9);
 
 }
 
-#typewriter{
+@keyframes beat{
 
-border-right:2px solid white;
-white-space:pre-line;
+0%{transform:scale(1);}
+50%{transform:scale(1.18);}
+100%{transform:scale(1);}
 
 }
 
-@keyframes fadeIn{
+@keyframes fade{
 
 from{
+
 opacity:0;
-transform:translateY(20px);
+
+transform:translateY(40px);
+
 }
 
 to{
 
 opacity:1;
-transform:translateY(0px);
+
+transform:translateY(0);
 
 }
 
@@ -126,114 +154,126 @@ transform:translateY(0px);
 
 <canvas id="stars"></canvas>
 
-<div class="container" id="intro">
+<div id="intro">
+
+<div id="heart">❤️</div>
 
 <h1>BELLA</h1>
 
 <p>Just trust me for one minute...</p>
 
-<button onclick="startStory()">
+<button id="open">
+
 Open Your Heart ❤️
+
 </button>
-
-</div>
-
-<div class="message" id="story">
-
-<div id="typewriter"></div>
 
 </div>
 
 <script>
 
 const canvas=document.getElementById("stars");
+
 const ctx=canvas.getContext("2d");
 
+function resize(){
+
 canvas.width=window.innerWidth;
+
 canvas.height=window.innerHeight;
+
+}
+
+resize();
+
+window.onresize=resize;
 
 let stars=[];
 
-for(let i=0;i<200;i++){
+for(let i=0;i<250;i++){
 
 stars.push({
 
 x:Math.random()*canvas.width,
+
 y:Math.random()*canvas.height,
+
 r:Math.random()*2,
-s:Math.random()*0.5+0.2
+
+v:Math.random()*0.6+.1,
+
+a:Math.random()
 
 });
 
 }
 
-function draw(){
+function animate(){
 
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
-ctx.fillStyle="white";
-
-stars.forEach(st=>{
+stars.forEach(s=>{
 
 ctx.beginPath();
 
-ctx.arc(st.x,st.y,st.r,0,Math.PI*2);
+ctx.fillStyle="rgba(255,255,255,"+s.a+")";
+
+ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
 
 ctx.fill();
 
-st.y+=st.s;
+s.y+=s.v;
 
-if(st.y>canvas.height){
+if(s.y>canvas.height){
 
-st.y=0;
+s.y=0;
 
-st.x=Math.random()*canvas.width;
+s.x=Math.random()*canvas.width;
 
 }
 
 });
 
-requestAnimationFrame(draw);
+requestAnimationFrame(animate);
 
 }
 
-draw();
+animate();
 
-function startStory(){
+document.getElementById("open").onclick=function(){
 
-document.getElementById("intro").style.display="none";
+document.body.style.transition="2s";
 
-document.getElementById("story").style.display="block";
+document.body.style.background="#05010d";
 
-const text=
+document.getElementById("intro").innerHTML=`
 
-`I just wanted to give you
+<div style="font-size:70px;line-height:1.6;animation:fade 2s;">
+
+I just wanted to give you
+
+<br><br>
+
 a little moment...
 
+<br><br>
+
+<span style="color:#ff5f8f;">
+
 Because you make my days
-so much brighter. ❤️`;
 
-let i=0;
+so much brighter. ❤️
 
-function typing(){
+</span>
 
-if(i<text.length){
+</div>
 
-document.getElementById("typewriter").innerHTML+=text.charAt(i);
+`;
 
-i++;
-
-setTimeout(typing,60);
-
-}
-
-}
-
-typing();
-
-}
+};
 
 </script>
 
 </body>
+
 </html>
